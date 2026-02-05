@@ -205,3 +205,29 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ==========================================
+# Project-Specific Ignores
+# ==========================================
+
+# Data files (too large for git)
+*.csv
+*.parquet
+*.pkl
+*.joblib
+data/
+
+# Model artifacts (stored in S3)
+models/
+*.tar.gz
+
+# SageMaker local mode
+.sagemaker/
+
+# AWS credentials (NEVER commit)
+*.pem
+credentials.json
+
+# IDE
+.idea/
+.vscode/

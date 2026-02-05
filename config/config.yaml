@@ -1,0 +1,91 @@
+# CLV Machine Learning Configuration
+# ==================================
+
+# Data Processing
+data:
+  # Column mappings for input data
+  columns:
+    customer_id: "CustomerID"
+    date: "Arrival Date"
+    revenue: "Total Revenue USD"
+    channel: "Channel"
+
+# Model Parameters
+model:
+  # Prediction horizon in days
+  xdays: 365
+  
+  # Channel groupings
+  channel_groups:
+    WEB: "WEB"
+    OTA_GDS:
+      - "GDS"
+      - "CRS"
+      - "INTERNET"
+      - "GOOG"
+      - "EMAIL"
+      - "IDS"
+    Direct:
+      - "RL"
+      - "PMS"
+      - "DCI"
+      - "WI"
+      - "HOUSE"
+      - "SAL"
+    Corporate:
+      - "SYDC"
+      - "GCI"
+      - "MARKETING"
+    Specialty:
+      - "CHOPRA"
+  
+  # RFM segment thresholds
+  rfm_segments:
+    Champions:
+      min_score: 13
+      max_score: 15
+    Loyal_Customers:
+      min_score: 10
+      max_score: 12
+    Potential_Loyalists:
+      min_score: 7
+      max_score: 9
+    At_Risk:
+      min_score: 4
+      max_score: 6
+    Lost:
+      min_score: 3
+      max_score: 3
+
+# SageMaker Configuration
+sagemaker:
+  # Instance configuration
+  instance_type: "ml.m5.large"
+  instance_count: 1
+  
+  # Model naming
+  model_name: "clv-prediction-model"
+  endpoint_name: "clv-prediction-endpoint"
+  
+  # S3 paths (to be filled with actual values)
+  s3_bucket: "your-bucket-name"
+  s3_model_prefix: "clv-models"
+  s3_data_prefix: "clv-data"
+  
+  # IAM role (to be filled with actual ARN)
+  role_arn: "arn:aws:iam::ACCOUNT_ID:role/SageMakerExecutionRole"
+
+# Inference API
+api:
+  # Request limits
+  max_customers_per_request: 100
+  timeout_seconds: 30
+  
+  # Response configuration
+  include_rfm_details: true
+  include_mismatch_analysis: true
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
