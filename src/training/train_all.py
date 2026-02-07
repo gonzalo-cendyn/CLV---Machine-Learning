@@ -355,21 +355,28 @@ def main():
     )
     
     # Find training data file
-    train_file = os.path.join(args.train, 'transactions.csv')
-    if not os.path.exists(train_file):
-        # Try alternative names
-        alternatives = ['data.csv', 'train.csv', 'clv_data.csv']
-        for alt in alternatives:
-            alt_path = os.path.join(args.train, alt)
-            if os.path.exists(alt_path):
-                train_file = alt_path
-                break
-        else:
-            # List available files
-            available = os.listdir(args.train) if os.path.exists(args.train) else []
-            raise FileNotFoundError(
-                f"Training file not found. Available files in {args.train}: {available}"
-            )
+    train_file = None
+    possible_names = ['transactions.csv', 'data.csv', 'train.csv', 'clv_data.csv', 'clv_training_data.csv']
+    
+    # First try direct file names
+    for name in possible_names:
+        candidate = os.path.join(args.train, name)
+        if os.path.exists(candidate):
+            train_file = candidate
+            break
+    
+    # If not found, look for any CSV file
+    if train_file is None and os.path.exists(args.train):
+        csv_files = [f for f in os.listdir(args.train) if f.endswith('.csv')]
+        if csv_files:
+            train_file = os.path.join(args.train, csv_files[0])
+            logger.info(f"Found CSV file: {csv_files[0]}")
+    
+    if train_file is None or not os.path.exists(train_file):
+        available = os.listdir(args.train) if os.path.exists(args.train) else []
+        raise FileNotFoundError(
+            f"Training file not found. Available files in {args.train}: {available}"
+        )
     
     logger.info(f"Using training file: {train_file}")
     

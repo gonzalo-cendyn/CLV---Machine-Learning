@@ -3,22 +3,22 @@
 
 # AWS Account Settings
 aws:
-  account_id: "335400931665"
+  account_id: "443331476484"
   region: "us-east-2"
   
   # IAM Role for SageMaker
-  role_arn: "arn:aws:iam::335400931665:role/AmazonSageMaker-ExecutionRole-20260203T200445"
+  role_arn: "arn:aws:iam::443331476484:role/SageMakerCLVExecutionRole"
 
 # S3 Configuration
 s3:
-  bucket: "cendyn-clv-models"
+  bucket: "sagemaker-us-east-2-443331476484"
   prefix: "clv-ml"
   
   # Paths
   paths:
-    training_data: "s3://cendyn-clv-models/clv-ml/data/"
-    model_artifacts: "s3://cendyn-clv-models/clv-ml/models/"
-    output: "s3://cendyn-clv-models/clv-ml/output/"
+    training_data: "s3://sagemaker-us-east-2-443331476484/clv-ml/data/"
+    model_artifacts: "s3://sagemaker-us-east-2-443331476484/clv-ml/models/"
+    output: "s3://sagemaker-us-east-2-443331476484/clv-ml/output/"
 
 # Model Configuration
 model:
