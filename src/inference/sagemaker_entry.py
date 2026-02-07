@@ -60,28 +60,31 @@ def model_fn(model_dir: str) -> Dict[str, Any]:
         _config = {
             'snapshot_date': '2025-06-04',
             'xdays': 365,
-            'model_files': {
-                'cox': 'cox/cox_model.joblib',
-                'bgnbd': 'bgnbd/bgnbd_model.pkl',
-                'gamma_gamma': 'gamma_gamma/gamma_gamma_model.pkl'
+            'models': {
+                'cox': 'cox_model.joblib',
+                'bgnbd': 'bgnbd_model.pkl',
+                'gamma_gamma': 'gamma_gamma_model.pkl'
             }
         }
     
+    # Get model files - support both old and new config formats
+    model_files = _config.get('models', _config.get('model_files', {}))
+    
     # Load Cox model
-    cox_path = os.path.join(model_dir, _config['model_files']['cox'])
+    cox_path = os.path.join(model_dir, model_files.get('cox', 'cox_model.joblib'))
     if os.path.exists(cox_path):
         _cox_model = joblib.load(cox_path)
         logger.info("Cox model loaded")
     
     # Load BG/NBD model
-    bgnbd_path = os.path.join(model_dir, _config['model_files']['bgnbd'])
+    bgnbd_path = os.path.join(model_dir, model_files.get('bgnbd', 'bgnbd_model.pkl'))
     if os.path.exists(bgnbd_path):
         with open(bgnbd_path, 'rb') as f:
             _bgnbd_model = dill.load(f)
         logger.info("BG/NBD model loaded")
     
     # Load Gamma-Gamma model
-    gg_path = os.path.join(model_dir, _config['model_files']['gamma_gamma'])
+    gg_path = os.path.join(model_dir, model_files.get('gamma_gamma', 'gamma_gamma_model.pkl'))
     if os.path.exists(gg_path):
         with open(gg_path, 'rb') as f:
             _gamma_gamma_model = dill.load(f)
@@ -128,8 +131,8 @@ def predict_fn(input_data: Dict[str, Any], models: Dict[str, Any]) -> List[Dict[
     from lifetimes.utils import summary_data_from_transaction_data
     
     customer_data = input_data.get('customers', [])
-    snapshot_date = input_data.get('snapshot_date', _config['snapshot_date'])
-    xdays = input_data.get('xdays', _config['xdays'])
+    snapshot_date = input_data.get('snapshot_date', _config.get('snapshot_date', '2025-06-04'))
+    xdays = input_data.get('xdays', _config.get('xdays', 365))
     
     snapshot_date = pd.to_datetime(snapshot_date)
     

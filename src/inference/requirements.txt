@@ -1,0 +1,8 @@
+# Requirements for SageMaker Inference
+# Compatible with SKLearn container numpy 1.24.1
+
+pandas==1.5.3
+lifelines==0.27.8
+lifetimes==0.11.3
+scipy==1.10.1
+dill==0.3.6
