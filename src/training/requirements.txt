@@ -1,10 +1,9 @@
 # Requirements for SageMaker Training Job
 # These are installed in the SKLearn container
+# Note: SageMaker sklearn:1.2-1 has numpy 1.24.1, so we use compatible versions
 
-pandas>=1.5.0
-numpy>=1.23.0
-lifelines>=0.27.0
-lifetimes>=0.11.0
-scipy>=1.9.0
-joblib>=1.2.0
-dill>=0.3.6
+pandas==1.5.3
+lifelines==0.27.8
+lifetimes==0.11.3
+scipy==1.10.1
+dill==0.3.6
