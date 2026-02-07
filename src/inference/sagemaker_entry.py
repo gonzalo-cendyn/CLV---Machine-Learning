@@ -188,9 +188,17 @@ def predict_fn(input_data: Dict[str, Any], models: Dict[str, Any]) -> List[Dict[
         
         # Predict with Cox model
         if _cox_model is not None:
-            df_pred = pd.DataFrame({'avg_spend': [cust['avg_spend']]})
-            surv_prob = _cox_model.predict_survival_function(df_pred, times=[xdays])
-            p_return = 1 - surv_prob.iloc[0, 0]
+            # Use the same column names as training: avg_revenue, tx_count
+            df_pred = pd.DataFrame({
+                'avg_revenue': [cust['avg_spend']],
+                'tx_count': [int(cust['visit_count'])]
+            })
+            try:
+                surv_prob = _cox_model.predict_survival_function(df_pred, times=[xdays])
+                p_return = 1 - surv_prob.iloc[0, 0]
+            except Exception as e:
+                logger.warning(f"Cox prediction failed for {cid}: {e}")
+                p_return = 0.1
         else:
             p_return = 0.1
         
