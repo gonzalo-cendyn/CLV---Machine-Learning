@@ -12,6 +12,7 @@ sagemaker>=2.150.0
 
 # Utilities
 joblib>=1.3.0
+dill>=0.3.0
 PyYAML>=6.0
 
 # Testing

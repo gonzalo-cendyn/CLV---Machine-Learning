@@ -14,6 +14,7 @@ from typing import Dict, List, Any, Optional, Tuple
 import pandas as pd
 import numpy as np
 import joblib
+import dill
 
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -76,8 +77,8 @@ class CLVInferenceHandler:
                 'xdays': 365,
                 'model_files': {
                     'cox': 'cox/cox_model.joblib',
-                    'bgnbd': 'bgnbd/bgnbd_model.joblib',
-                    'gamma_gamma': 'gamma_gamma/gamma_gamma_model.joblib'
+                    'bgnbd': 'bgnbd/bgnbd_model.pkl',
+                    'gamma_gamma': 'gamma_gamma/gamma_gamma_model.pkl'
                 }
             }
         
@@ -98,7 +99,8 @@ class CLVInferenceHandler:
         # Load BG/NBD model
         bgnbd_path = os.path.join(model_dir, self.config['model_files']['bgnbd'])
         if os.path.exists(bgnbd_path):
-            self.bgnbd_model = joblib.load(bgnbd_path)
+            with open(bgnbd_path, 'rb') as f:
+                self.bgnbd_model = dill.load(f)
             logger.info("BG/NBD model loaded")
         else:
             logger.warning(f"BG/NBD model not found at {bgnbd_path}")
@@ -106,7 +108,8 @@ class CLVInferenceHandler:
         # Load Gamma-Gamma model
         gg_path = os.path.join(model_dir, self.config['model_files']['gamma_gamma'])
         if os.path.exists(gg_path):
-            self.gamma_gamma_model = joblib.load(gg_path)
+            with open(gg_path, 'rb') as f:
+                self.gamma_gamma_model = dill.load(f)
             logger.info("Gamma-Gamma model loaded")
         else:
             logger.warning(f"Gamma-Gamma model not found at {gg_path}")

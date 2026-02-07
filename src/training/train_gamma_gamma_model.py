@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 
 import pandas as pd
 import numpy as np
-import joblib
+import dill
 from lifetimes import GammaGammaFitter
 from lifetimes.utils import summary_data_from_transaction_data
 
@@ -188,10 +188,11 @@ class GammaGammaModelTrainer:
         
         os.makedirs(output_path, exist_ok=True)
         
-        model_file = os.path.join(output_path, 'gamma_gamma_model.joblib')
+        model_file = os.path.join(output_path, 'gamma_gamma_model.pkl')
         metrics_file = os.path.join(output_path, 'gamma_gamma_metrics.json')
         
-        joblib.dump(self.model, model_file)
+        with open(model_file, 'wb') as f:
+            dill.dump(self.model, f)
         
         with open(metrics_file, 'w') as f:
             json.dump(self.training_metrics, f, indent=2)
@@ -213,7 +214,8 @@ class GammaGammaModelTrainer:
             GammaGammaModelTrainer instance with loaded model
         """
         trainer = cls()
-        trainer.model = joblib.load(model_path)
+        with open(model_path, 'rb') as f:
+            trainer.model = dill.load(f)
         logger.info(f"Model loaded from {model_path}")
         return trainer
 

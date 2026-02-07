@@ -107,24 +107,27 @@ class CLVModelPipeline:
     
     def train_cox_model(self) -> CoxModelTrainer:
         """
-        Train Cox PH model for one-timers.
+        Train Cox PH model for predicting return probability.
+        
+        Note: We train on ALL customers to learn return patterns,
+        then use the model to predict for one-timers only.
         
         Returns:
             Trained CoxModelTrainer
         """
         logger.info("\n" + "="*60)
-        logger.info("TRAINING COX PROPORTIONAL HAZARDS MODEL (One-Timers)")
+        logger.info("TRAINING COX PROPORTIONAL HAZARDS MODEL")
         logger.info("="*60)
         
-        # Get one-timer customer data
+        # Get ALL customer data (need events=1 from repeaters to train)
         df_cust = self.data['customer_data']
-        df_onetimers = df_cust[df_cust['visit_count'] == 1].copy()
         
-        logger.info(f"One-timer customers: {len(df_onetimers)}")
+        logger.info(f"Total customers: {len(df_cust)}")
+        logger.info(f"Event rate (returned): {df_cust['event'].mean():.2%}")
         
-        # Train model
+        # Train model on all customers
         self.cox_trainer = CoxModelTrainer(penalizer=self.penalizer)
-        df_model = self.cox_trainer.prepare_data(df_onetimers)
+        df_model = self.cox_trainer.prepare_data(df_cust)
         self.cox_trainer.train(df_model)
         
         self.pipeline_metrics['models']['cox'] = self.cox_trainer.training_metrics
@@ -270,8 +273,8 @@ class CLVModelPipeline:
             'penalizer': self.penalizer,
             'model_files': {
                 'cox': 'cox/cox_model.joblib',
-                'bgnbd': 'bgnbd/bgnbd_model.joblib',
-                'gamma_gamma': 'gamma_gamma/gamma_gamma_model.joblib'
+                'bgnbd': 'bgnbd/bgnbd_model.pkl',
+                'gamma_gamma': 'gamma_gamma/gamma_gamma_model.pkl'
             }
         }
         config_file = os.path.join(output_path, 'model_config.json')
