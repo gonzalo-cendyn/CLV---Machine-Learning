@@ -1,0 +1,65 @@
+# SageMaker Configuration for CLV Model Deployment
+# =================================================
+
+# AWS Account Settings
+aws:
+  account_id: "335400931665"
+  region: "us-east-2"
+  
+  # IAM Role for SageMaker
+  role_arn: "arn:aws:iam::335400931665:role/AmazonSageMaker-ExecutionRole-20260203T200445"
+
+# S3 Configuration
+s3:
+  bucket: "cendyn-clv-models"
+  prefix: "clv-ml"
+  
+  # Paths
+  paths:
+    training_data: "s3://cendyn-clv-models/clv-ml/data/"
+    model_artifacts: "s3://cendyn-clv-models/clv-ml/models/"
+    output: "s3://cendyn-clv-models/clv-ml/output/"
+
+# Model Configuration
+model:
+  name: "clv-prediction-model"
+  
+  # Training parameters
+  training:
+    snapshot_date: "2025-06-04"
+    xdays: 365
+    penalizer: 0.0
+
+# Endpoint Configuration
+endpoint:
+  name: "clv-prediction-endpoint"
+  
+  # Instance configuration for real-time inference
+  instance_type: "ml.m5.large"
+  instance_count: 1
+  
+  # Variants (for A/B testing or blue/green deployment)
+  variants:
+    - name: "AllTraffic"
+      weight: 1.0
+
+# Training Job Configuration
+training_job:
+  instance_type: "ml.m5.large"
+  instance_count: 1
+  volume_size_gb: 30
+  max_runtime_seconds: 3600
+
+# Framework Configuration
+framework:
+  # Using SKLearn container with custom dependencies
+  name: "sklearn"
+  version: "1.2-1"
+  python_version: "py3"
+
+# Tags for resource management
+tags:
+  Project: "CLV-ML"
+  Environment: "development"
+  Owner: "ggiosa@cendyn.com"
+  CostCenter: "AI-NPD"
